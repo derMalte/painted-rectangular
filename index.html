@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Half & Half</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .container {
+      display: flex;
+      flex: 1;
+    }
+
+    #root {
+      width: 100%;
+      height: 100%;
+    }
+
+    .cell {
+      flex: 1;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .cell::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(128, 128, 128, 0.2);
+      opacity: 0;
+      transition: opacity 0.15s;
+      pointer-events: none;
+    }
+
+    .cell:hover::after {
+      opacity: 1;
+    }
+
+    .cell.black { background: black; }
+    .cell.white { background: white; }
+  </style>
+</head>
+<body>
+  <div class="container" id="root"></div>
+
+  <script>
+    function createCell(color) {
+      const cell = document.createElement('div');
+      cell.className = `cell ${color}`;
+      cell.addEventListener('click', onCellClick);
+      return cell;
+    }
+
+    function onCellClick(e) {
+      e.stopPropagation();
+      const cell = e.currentTarget;
+      const rect = cell.getBoundingClientRect();
+      const color = cell.classList.contains('black') ? 'black' : 'white';
+      const other = color === 'black' ? 'white' : 'black';
+
+      const container = document.createElement('div');
+      container.className = 'container';
+      container.style.flexDirection = rect.width >= rect.height ? 'row' : 'column';
+
+      container.appendChild(createCell(color));
+      container.appendChild(createCell(other));
+
+      cell.parentNode.replaceChild(container, cell);
+    }
+
+    function init() {
+      const root = document.getElementById('root');
+      root.style.flexDirection = window.innerWidth >= window.innerHeight ? 'row' : 'column';
+      root.appendChild(createCell('black'));
+      root.appendChild(createCell('white'));
+    }
+
+    init();
+  </script>
+</body>
+</html>
